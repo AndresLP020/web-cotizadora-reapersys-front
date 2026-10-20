@@ -1,8 +1,13 @@
-import path from "node:path";
 import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV === "development";
 const apiOrigin = new URL(process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1").origin;
+/**
+ * Origen de la API real a la que se reenvía `/api/v1/*` (p. ej. https://reapersys-api.onrender.com).
+ * Con él, el navegador solo habla con este mismo dominio: la cookie de sesión del panel es de primera parte
+ * aunque la API viva en otro dominio (Vercel → Render). Sin él no hay reenvío (desarrollo local).
+ */
+const apiProxyTarget = process.env.API_PROXY_TARGET?.replace(/\/+$/, "");
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 /**
@@ -41,10 +46,8 @@ const nextConfig: NextConfig = {
   partialPrefetching: true,
   poweredByHeader: false,
   reactStrictMode: true,
-  // Servidor autocontenido para la imagen de Docker (solo los archivos necesarios en producción).
-  output: "standalone",
-  // En el monorepo, el rastreo de dependencias parte de la raíz (node_modules compartido).
-  outputFileTracingRoot: path.resolve(process.cwd(), ".."),
+  // Servidor autocontenido para la imagen de Docker; Vercel usa su propio empaquetado.
+  ...(process.env.VERCEL ? {} : { output: "standalone" as const }),
   turbopack: {
     rules: {
       "*.css": {
@@ -52,6 +55,9 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+  },
+  async rewrites() {
+    return apiProxyTarget ? [{ source: "/api/v1/:path*", destination: `${apiProxyTarget}/api/v1/:path*` }] : [];
   },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
