@@ -1,6 +1,7 @@
 import { Mail, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/brand/logo";
+import { socialIcons } from "@/components/brand/social-icons";
 import { footerNav } from "@/content/navigation";
 import { contactLinks, getPublicSettings } from "@/services/public-settings";
 import { Container } from "./container";
@@ -45,13 +46,22 @@ export async function SiteFooter() {
                   </a>
                 </li>
               )}
-              {contactInfo.social.map((item) => (
-                <li key={item.label}>
-                  <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-snow/80 hover:text-snow">
-                    {item.label}
-                  </a>
-                </li>
-              ))}
+              {contactInfo.social.map((item) => {
+                const Icon = socialIcons[item.label];
+                return (
+                  <li key={item.label}>
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-snow/80 hover:text-snow"
+                    >
+                      <Icon className="size-4" aria-hidden />
+                      {item.label}
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>

@@ -50,13 +50,23 @@ export async function getPublicSettings(): Promise<PublicSettings> {
 /** Enlaces de contacto listos para mostrar; solo los que estén configurados. */
 export function contactLinks(settings: PublicSettings) {
   const { contact } = settings;
+  const social: { label: SocialNetwork; url: string | null }[] = [
+    { label: "Facebook", url: contact.facebook },
+    { label: "Instagram", url: contact.instagram },
+    { label: "TikTok", url: contact.tiktok },
+  ];
   return {
     email: contact.email,
     whatsappUrl: contact.whatsapp ? `https://wa.me/${contact.whatsapp}` : null,
-    social: [
-      { label: "Facebook", url: contact.facebook },
-      { label: "Instagram", url: contact.instagram },
-      { label: "TikTok", url: contact.tiktok },
-    ].filter((item): item is { label: string; url: string } => Boolean(item.url)),
+    whatsappDisplay: contact.whatsapp ? formatWhatsapp(contact.whatsapp) : null,
+    social: social.filter((item): item is { label: SocialNetwork; url: string } => Boolean(item.url)),
   };
+}
+
+export type SocialNetwork = "Facebook" | "Instagram" | "TikTok";
+
+/** 527121537999 → +52 712 153 7999; otros formatos se muestran con un "+" al inicio. */
+function formatWhatsapp(digits: string) {
+  const mx = /^52(1?)(\d{3})(\d{3})(\d{4})$/.exec(digits);
+  return mx ? `+52 ${mx[2]} ${mx[3]} ${mx[4]}` : `+${digits}`;
 }

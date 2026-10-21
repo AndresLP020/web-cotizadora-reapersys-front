@@ -1,6 +1,7 @@
 import { Mail, MessageCircle, ReceiptText } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { socialIcons } from "@/components/brand/social-icons";
 import { Section } from "@/components/layout/section";
 import { Reveal } from "@/components/motion/reveal";
 import { ContactForm } from "@/features/contact/contact-form";
@@ -52,16 +53,42 @@ export default async function ContactPage() {
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 text-sm text-foreground-secondary hover:text-foreground"
                   >
-                    <MessageCircle className="size-4 text-electric" aria-hidden />
-                    Escríbenos por WhatsApp
+                    <MessageCircle className="size-4 shrink-0 text-electric" aria-hidden />
+                    <span>
+                      Escríbenos por WhatsApp
+                      <span className="block text-xs text-foreground-secondary/80">{contactInfo.whatsappDisplay}</span>
+                    </span>
                   </a>
                 )}
                 {contactInfo.email && (
-                  <a href={`mailto:${contactInfo.email}`} className="flex items-center gap-3 text-sm text-foreground-secondary hover:text-foreground">
-                    <Mail className="size-4 text-electric" aria-hidden />
+                  <a
+                    href={`mailto:${contactInfo.email}`}
+                    className="flex items-center gap-3 text-sm break-all text-foreground-secondary hover:text-foreground"
+                  >
+                    <Mail className="size-4 shrink-0 text-electric" aria-hidden />
                     {contactInfo.email}
                   </a>
                 )}
+              </aside>
+            )}
+            {contactInfo.social.length > 0 && (
+              <aside className="space-y-3 rounded-2xl border border-border bg-card shadow-card p-6">
+                <h2 className="font-heading text-lg font-semibold">Síguenos</h2>
+                {contactInfo.social.map(({ label, url }) => {
+                  const Icon = socialIcons[label];
+                  return (
+                    <a
+                      key={label}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 text-sm text-foreground-secondary hover:text-foreground"
+                    >
+                      <Icon className="size-4 shrink-0 text-electric" aria-hidden />
+                      {label}
+                    </a>
+                  );
+                })}
               </aside>
             )}
           </Reveal>
