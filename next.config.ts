@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV === "development";
@@ -8,6 +10,17 @@ const apiOrigin = new URL(process.env.NEXT_PUBLIC_API_URL || "http://localhost:4
  * aunque la API viva en otro dominio (Vercel → Render). Sin él no hay reenvío (desarrollo local).
  */
 const apiProxyTarget = process.env.API_PROXY_TARGET?.replace(/\/+$/, "");
+/**
+ * En el monorepo (npm workspaces) `next` queda instalado en la raíz y no en frontend/node_modules.
+ * Como frontend/ tiene su propio .git y package-lock.json (repo de Vercel), Turbopack tomaría frontend/
+ * como raíz y no encontraría el paquete. En ese caso se usa la raíz del monorepo; en Vercel, la propia.
+ */
+const monorepoRoot = path.resolve(__dirname, "..");
+const workspaceRoot =
+  !fs.existsSync(path.join(__dirname, "node_modules", "next")) &&
+  fs.existsSync(path.join(monorepoRoot, "node_modules", "next"))
+    ? monorepoRoot
+    : undefined;
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 /**
@@ -48,7 +61,9 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   // Servidor autocontenido para la imagen de Docker; Vercel usa su propio empaquetado.
   ...(process.env.VERCEL ? {} : { output: "standalone" as const }),
+  ...(workspaceRoot ? { outputFileTracingRoot: workspaceRoot } : {}),
   turbopack: {
+    ...(workspaceRoot ? { root: workspaceRoot } : {}),
     rules: {
       "*.css": {
         loaders: ["@tailwindcss/turbopack"],
