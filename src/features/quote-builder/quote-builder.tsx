@@ -55,12 +55,18 @@ export function QuoteBuilder() {
     const paquete = params.get("paquete");
     const modalidad = params.get("modalidad");
     const plan = params.get("plan");
+    const desde = params.get("desde");
     void Promise.resolve(useQuoteStore.persist.rehydrate()).then(() => {
       const store = useQuoteStore.getState();
       if (paquete && SLUG.test(paquete)) {
         if (store.packageSlug !== paquete) store.choosePackage(paquete);
         if (modalidad === "suscripcion" || modalidad === "compra") store.setPaymentMode(modalidad === "suscripcion" ? "subscription" : "purchase");
         if (plan && PLAN_PARAMS[plan]) store.setSubscriptionPlan(PLAN_PARAMS[plan]);
+        if (!store.solution) store.setSolution("unsure");
+        store.goTo(4);
+      } else if (desde === "cero") {
+        // «Armar desde cero» (/paquetes): sin paquete, directo a personalizar.
+        if (!store.fromScratch) store.choosePackage(null);
         if (!store.solution) store.setSolution("unsure");
         store.goTo(4);
       } else if (industria && SLUG.test(industria)) {

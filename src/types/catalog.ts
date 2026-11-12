@@ -27,6 +27,8 @@ export interface PublicPackage {
   name: string;
   category: PackageCategory;
   summary: string;
+  /** Promesa de una línea (editable en el panel); null si no se ha capturado. */
+  tagline: string | null;
   pricing: PublicPricing;
   features: string[];
   variants: PublicPackageVariant[];
@@ -59,4 +61,30 @@ export interface PublicSubscriptionOffer {
 
 export interface PackageListResponse {
   items: PublicPackage[];
+}
+
+export interface PublicComponentRef {
+  slug: string;
+  name: string;
+  unit: string;
+  /** Nombre cuando viene incluido («Soporte inicial y capacitación»). */
+  includedLabel?: string;
+  /** Lo que contiene sin ser un componente propio («Productos ilimitados»). */
+  highlights: string[];
+  maxQuantity: number;
+}
+
+export interface PublicPackageItem {
+  component: PublicComponentRef;
+  quantity: number;
+  removable: boolean;
+}
+
+/** Detalle de un paquete (GET /api/v1/packages/:slug): lo incluido y los complementos que se pueden agregar. */
+export interface PublicPackageDetail extends PublicPackage {
+  items: PublicPackageItem[];
+  includedPackages: { slug: string; name: string; items: PublicPackageItem[] }[];
+  addOns: { slug: string; name: string }[];
+  /** Slugs que el paquete ya cubre aunque no estén en items. */
+  equivalents: string[];
 }

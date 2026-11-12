@@ -62,6 +62,7 @@ function EditorBody({ detail }: { detail: AdminPackageDetail }) {
   const [base, setBase] = useState(centsToInput(published?.baseCents));
   const [notes, setNotes] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
+  const [tagline, setTagline] = useState(detail.tagline);
   const renting = detail.rentalProfile.enabled;
   const [rentalMode, setRentalMode] = useState<PriceMode>(published?.rental?.mode ?? "pending");
   const [monthly, setMonthly] = useState(centsToInput(published?.rental?.monthlyCents));
@@ -165,6 +166,22 @@ function EditorBody({ detail }: { detail: AdminPackageDetail }) {
               <Label htmlFor="pkg-featured">Destacado en la página de inicio</Label>
               <Switch id="pkg-featured" checked={detail.featured} disabled={updatePackage.isPending} onCheckedChange={(v) => updatePackage.mutate({ featured: v })} />
             </div>
+            <form
+              className="space-y-1.5 border-t border-border pt-3"
+              onSubmit={(e) => {
+                e.preventDefault();
+                updatePackage.mutate({ tagline: tagline.trim() });
+              }}
+            >
+              <Label htmlFor="pkg-tagline">Promesa de la tarjeta (una línea)</Label>
+              <div className="flex gap-2">
+                <Input id="pkg-tagline" value={tagline} maxLength={140} onChange={(e) => setTagline(e.target.value)} placeholder={detail.name} />
+                <Button type="submit" variant="outline" disabled={updatePackage.isPending || tagline.trim() === detail.tagline}>
+                  Guardar
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">Se muestra bajo el nombre en /paquetes. Vacío = se usa el resumen del paquete. {tagline.length}/140</p>
+            </form>
             {updatePackage.error && <ErrorState error={updatePackage.error} />}
           </section>
         )}

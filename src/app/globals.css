@@ -93,6 +93,15 @@
   --color-nfc-panel: var(--rs-nfc-panel);
   --color-nfc-deep: var(--rs-nfc-deep);
 
+  /* Paquetes */
+  --color-plan: var(--rs-plan);
+  --color-save: var(--rs-save);
+  --color-save-ink: var(--rs-save-ink);
+  --color-save-bg: var(--rs-save-bg);
+  --color-combo: var(--rs-combo);
+  --color-price-bg: var(--rs-price-bg);
+  --color-combo-col: var(--rs-combo-col);
+
   /* Superficies propias */
   --color-surface: var(--rs-surface);
   --color-surface-raised: var(--rs-surface-raised);

@@ -4,10 +4,10 @@ import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getPackages } from "@/services/catalog";
-import { getPublicSettings } from "@/services/public-settings";
 import { cn } from "@/lib/utils";
 import type { PackageCategory } from "@/types/catalog";
 import { PackageCard } from "./package-card";
+import { themeFor } from "./package-logic";
 
 interface PackageGridProps {
   category?: PackageCategory;
@@ -26,7 +26,7 @@ export function PackageGrid(props: PackageGridProps) {
 }
 
 async function PackageGridContent({ category, featured, limit, className }: PackageGridProps) {
-  const [result, settings] = await Promise.all([getPackages({ category, featured }), getPublicSettings()]);
+  const result = await getPackages({ category, featured });
 
   if (result.status === "unavailable") return <CatalogUnavailable />;
   const items = limit ? result.items.slice(0, limit) : result.items;
@@ -35,7 +35,7 @@ async function PackageGridContent({ category, featured, limit, className }: Pack
   return (
     <div className={cn("grid gap-6 md:grid-cols-2 xl:grid-cols-3", className)}>
       {items.map((pkg) => (
-        <PackageCard key={pkg.slug} pkg={pkg} plans={settings.subscription} />
+        <PackageCard key={pkg.slug} pkg={pkg} theme={themeFor(pkg, items.filter((p) => p.category === pkg.category).indexOf(pkg))} />
       ))}
     </div>
   );

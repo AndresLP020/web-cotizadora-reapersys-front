@@ -92,6 +92,15 @@
   --rs-nfc-panel: #0b1626;
   --rs-nfc-deep: #0369a1;
 
+  /* Paquetes: acento azul, ahorro/incluido en verde, banda del combo y fondo del bloque de precio. */
+  --rs-plan: #2f5bea;
+  --rs-save: #86efac;
+  --rs-save-ink: #14532d;
+  --rs-save-bg: #dcfce7;
+  --rs-combo: #0c1530;
+  --rs-price-bg: #f5f7fa;
+  --rs-combo-col: #eef3ff;
+
   --rs-radius-sm: 0.5rem;
   --rs-radius-md: 0.875rem;
   --rs-radius-lg: 1.25rem;

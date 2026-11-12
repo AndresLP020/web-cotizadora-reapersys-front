@@ -1,55 +1,59 @@
 import type { Metadata } from "next";
-import { Section, SectionHeading } from "@/components/layout/section";
-import { CtaBanner } from "@/features/marketing/cta-banner";
-import { PageHero } from "@/features/marketing/page-hero";
-import { categoryLabels } from "@/features/packages/package-card";
-import { PackageGrid } from "@/features/packages/package-grid";
-import type { PackageCategory } from "@/types/catalog";
+import { Suspense } from "react";
+import { PackagesExperience } from "@/features/packages/packages-experience";
+import { PackageGridSkeleton } from "@/features/packages/package-grid";
+import { getPackageDetail, getPackages } from "@/services/catalog";
+import { contactLinks, getPublicSettings } from "@/services/public-settings";
 
 export const metadata: Metadata = {
   title: "Paquetes",
-  description: "Paquetes de desarrollo web, e-commerce, punto de venta y soluciones combinadas. Precios iniciales en MXN.",
+  description:
+    "Paquetes de desarrollo web, e-commerce, punto de venta y la Solución Combinada. Compáralos en pago único o renta mensual. Precios en MXN.",
   alternates: { canonical: "/paquetes" },
 };
 
-const sections: { category: PackageCategory; description: string }[] = [
-  { category: "web", description: "Landing pages y sitios corporativos." },
-  { category: "ecommerce", description: "Tiendas virtuales para vender en línea." },
-  { category: "pos", description: "Software de punto de venta: caja, inventario, tickets y clientes." },
-  {
-    category: "combo",
-    description: "Tienda virtual y punto de venta conectados, con catálogo e inventario compartidos sin costo extra de integración.",
-  },
-  { category: "custom", description: "Software a la medida o asesoría si aún no sabes qué necesitas." },
-];
-
 export default function PackagesPage() {
   return (
+    <Suspense fallback={<PackagesSkeleton />}>
+      <PackagesContent />
+    </Suspense>
+  );
+}
+
+/** Todo sale de la API en cada solicitud: precios, renta, puntos, complementos y lo que incluye cada paquete. */
+async function PackagesContent() {
+  const [result, settings] = await Promise.all([getPackages(), getPublicSettings()]);
+  if (result.status === "unavailable") return <PackagesSkeleton unavailable />;
+  const combo = result.items.find((p) => p.category === "combo");
+  const slugs = combo ? [combo.slug, ...combo.includesPackages.map((p) => p.slug)] : [];
+  const details = (await Promise.all(slugs.map((slug) => getPackageDetail(slug)))).filter((d) => d !== null);
+  return <PackagesExperience packages={result.items} details={details} plans={settings.subscription} whatsappUrl={contactLinks(settings).whatsappUrl} />;
+}
+
+function PackagesSkeleton({ unavailable = false }: { unavailable?: boolean }) {
+  return (
     <>
-      <PageHero
-        eyebrow="Paquetes"
-        title="Elige un paquete y hazlo tuyo"
-        description="Importes iniciales sugeridos en MXN. Agrega o retira componentes en el cotizador: lo que ya está incluido no se cobra dos veces."
-        image="/images/backgrounds/night-offices.webp"
-      />
-      {sections.map(({ category, description }, index) => (
-        <Section
-          key={category}
-          id={category}
-          aria-labelledby={`${category}-title`}
-          tone={index % 2 === 1 ? "dark" : "tint"}
-          className={index === 0 ? "pt-14 sm:pt-20" : undefined}
-        >
-          <SectionHeading id={`${category}-title`} title={categoryLabels[category]} description={description} tone={index % 2 === 1 ? "navy" : "light"} />
-          <div className="mt-10">
-            <PackageGrid category={category} />
+      <section className="bg-night bg-grid-night pt-28 pb-28 text-night-text sm:pt-36">
+        <div className="mx-auto w-full max-w-[1240px] px-4 sm:px-6">
+          <p className="text-xs font-semibold tracking-[0.18em] text-new uppercase">Paquetes</p>
+          <h1 className="mt-5 text-5xl leading-[1] font-semibold tracking-[-0.035em] sm:text-6xl lg:text-[72px]">
+            Elige un paquete
+            <br />y hazlo tuyo
+          </h1>
+          {unavailable && (
+            <p className="mt-6 max-w-xl text-lg text-night-muted">
+              El catálogo no está disponible en este momento. Escríbenos desde <a href="/contacto" className="underline">contacto</a> y te enviamos una propuesta.
+            </p>
+          )}
+        </div>
+      </section>
+      {!unavailable && (
+        <section className="bg-paper py-20">
+          <div className="mx-auto w-full max-w-[1240px] px-4 sm:px-6">
+            <PackageGridSkeleton count={3} />
           </div>
-        </Section>
-      ))}
-      <CtaBanner
-        title="¿Ningún paquete se ajusta a lo que buscas?"
-        description="Arma tu solución desde cero en el cotizador o solicita una valoración personalizada."
-      />
+        </section>
+      )}
     </>
   );
 }

@@ -159,6 +159,8 @@ export interface AdminPackageDetail {
   category: PackageCategory;
   status: string;
   featured: boolean;
+  /** Promesa de una línea de la tarjeta en /paquetes. */
+  tagline: string;
   comboPolicy: { onEssentialRemoval: string; onVariantChange: string } | null;
   variantGroups: { key: string; name: string; defaultOption: string; options: { key: string; name: string }[] }[];
   removableItems: { componentId: string; name: string; essential: boolean }[];

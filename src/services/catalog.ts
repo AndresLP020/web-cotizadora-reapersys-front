@@ -1,5 +1,5 @@
 import { publicEnv } from "@/lib/env";
-import type { PackageCategory, PackageListResponse, PublicPackage } from "@/types/catalog";
+import type { PackageCategory, PackageListResponse, PublicPackage, PublicPackageDetail } from "@/types/catalog";
 
 /**
  * Acceso al catálogo desde Server Components.
@@ -29,5 +29,19 @@ export async function getPackages(filter: { category?: PackageCategory; featured
     return { status: "ok", items: [...body.items].sort((a, b) => a.sortOrder - b.sortOrder) };
   } catch {
     return { status: "unavailable", reason: "error" };
+  }
+}
+
+/** Detalle de un paquete (items incluidos y complementos). null si no está disponible. */
+export async function getPackageDetail(slug: string): Promise<PublicPackageDetail | null> {
+  try {
+    const response = await fetch(`${apiBase}/packages/${encodeURIComponent(slug)}`, {
+      headers: { Accept: "application/json" },
+      cache: "no-store",
+      signal: AbortSignal.timeout(5_000),
+    });
+    return response.ok ? ((await response.json()) as PublicPackageDetail) : null;
+  } catch {
+    return null;
   }
 }
