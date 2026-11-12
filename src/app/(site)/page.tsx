@@ -88,18 +88,8 @@ export default function HomePage() {
         />
       </Section>
 
-      {/* 2b. Productos digitales: detalles personalizables y tarjetas NFC */}
-      <Section aria-labelledby="digital-title" tone="tint">
-        <div className="mb-12 grid gap-6 lg:grid-cols-[1.2fr_1fr] lg:items-end">
-          <SectionHeading id="digital-title" eyebrow="Nuevo" title="Detalles digitales y tarjetas NFC" />
-          <Reveal delay={0.1}>
-            <p className="text-lg leading-relaxed text-pretty text-foreground-secondary lg:border-l lg:border-gold/50 lg:pl-6">
-              Sorprende a quien quieres con un detalle personalizado o lleva tu contacto a un toque del celular.
-            </p>
-          </Reveal>
-        </div>
-        <DigitalHomeSection />
-      </Section>
+      {/* 2b. Productos digitales: detalles personalizables y tarjetas NFC (banda oscura propia) */}
+      <DigitalHomeSection />
 
       {/* 3. Soluciones por industria: primera tarjeta destacada a dos columnas */}
       <Section aria-labelledby="industries-title" tone="tint-alt">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { ClipboardList, FileSignature, FileText, Gift, History, LayoutDashboard, LogOut, Menu, MessageSquareQuote, Settings, ShieldCheck, Tags, type LucideIcon, UserRound, Users, Wallet } from "lucide-react";
+import { ClipboardList, FileSignature, FileText, Gift, History, LayoutDashboard, LogOut, Menu, MessageSquareQuote, Nfc, PackageCheck, Settings, ShieldCheck, Tags, type LucideIcon, UserRound, Users, Wallet } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -14,7 +14,7 @@ import { useSession } from "./session";
 import type { Permission } from "./types";
 import { roleLabels } from "./ui";
 
-const NAV: { href: string; label: string; icon: LucideIcon; permission: Permission }[] = [
+const NAV: { href: string; label: string; icon: LucideIcon; permission: Permission; group?: string }[] = [
   { href: "/admin", label: "Tablero", icon: LayoutDashboard, permission: "dashboard:read" },
   { href: "/admin/cotizaciones", label: "Cotizaciones", icon: FileText, permission: "quotes:read" },
   { href: "/admin/prospectos", label: "Prospectos", icon: ClipboardList, permission: "leads:read" },
@@ -23,7 +23,9 @@ const NAV: { href: string; label: string; icon: LucideIcon; permission: Permissi
   { href: "/admin/contratos", label: "Rentas y compras", icon: FileSignature, permission: "billing:read" },
   { href: "/admin/testimonios", label: "Testimonios", icon: MessageSquareQuote, permission: "testimonials:manage" },
   { href: "/admin/precios", label: "Catálogo y precios", icon: Tags, permission: "catalog:read" },
-  { href: "/admin/plantillas", label: "Detalles digitales y NFC", icon: Gift, permission: "catalog:read" },
+  { href: "/admin/plantillas", label: "Plantillas de detalles", icon: Gift, permission: "catalog:read", group: "Productos digitales" },
+  { href: "/admin/disenos-nfc", label: "Diseños NFC", icon: Nfc, permission: "catalog:read", group: "Productos digitales" },
+  { href: "/admin/pedidos-digitales", label: "Pedidos de detalles y NFC", icon: PackageCheck, permission: "leads:read", group: "Productos digitales" },
   { href: "/admin/configuracion", label: "Configuración", icon: Settings, permission: "settings:read" },
   { href: "/admin/usuarios", label: "Usuarios", icon: ShieldCheck, permission: "users:manage" },
   { href: "/admin/auditoria", label: "Auditoría", icon: History, permission: "audit:read" },
@@ -38,10 +40,14 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const { user } = useSession();
   return (
     <ul className="space-y-1">
-      {NAV.filter((item) => user.permissions.includes(item.permission)).map((item) => {
+      {NAV.filter((item) => user.permissions.includes(item.permission)).map((item, index, visible) => {
         const active = isActive(pathname, item.href);
+        // Encabezado del grupo antes de su primer elemento (y separación al salir del grupo).
+        const startsGroup = item.group && visible[index - 1]?.group !== item.group;
+        const endsGroup = !item.group && visible[index - 1]?.group;
         return (
-          <li key={item.href}>
+          <li key={item.href} className={cn(endsGroup && "pt-3")}>
+            {startsGroup && <p className="px-3 pt-4 pb-1.5 text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">{item.group}</p>}
             <Link
               href={item.href}
               onClick={onNavigate}

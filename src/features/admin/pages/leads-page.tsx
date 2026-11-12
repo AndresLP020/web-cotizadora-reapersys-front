@@ -83,7 +83,7 @@ export function LeadsPage() {
                       <div className="mt-1 rounded-lg border border-border bg-mist px-3 py-2 text-sm">
                         <p className="font-medium">
                           {lead.digitalOrder.kind === "nfc_card" ? `Tarjetas NFC × ${lead.digitalOrder.quantity}` : "Detalle digital"} ·{" "}
-                          <a href={lead.digitalOrder.demoUrl} target="_blank" rel="noopener noreferrer" className="text-electric hover:underline">
+                          <a href={lead.digitalOrder.demoUrl || undefined} target="_blank" rel="noopener noreferrer" className="text-electric hover:underline">
                             {lead.digitalOrder.templateName}
                           </a>
                           <span className="font-normal text-muted-foreground">

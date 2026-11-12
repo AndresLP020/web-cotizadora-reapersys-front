@@ -69,6 +69,30 @@
   --color-success: var(--rs-success);
   --color-warning: var(--rs-warning);
 
+  /* Productos digitales */
+  --color-night: var(--rs-night);
+  --color-night-text: var(--rs-night-text);
+  --color-night-muted: var(--rs-night-muted);
+  --color-paper: var(--rs-paper);
+  --color-paper-line: var(--rs-paper-line);
+  --color-deep: var(--rs-deep);
+  --color-deep-muted: var(--rs-deep-muted);
+  --color-new: var(--rs-new);
+  --color-phone: var(--rs-phone);
+  --color-chat: var(--rs-chat);
+  --color-gift: var(--rs-gift);
+  --color-on-gift: var(--rs-on-gift);
+  --color-gift-stage: var(--rs-gift-stage);
+  --color-gift-night: var(--rs-gift-night);
+  --color-gift-form: var(--rs-gift-form);
+  --color-gift-deep: var(--rs-gift-deep);
+  --color-nfc: var(--rs-nfc);
+  --color-on-nfc: var(--rs-on-nfc);
+  --color-nfc-stage: var(--rs-nfc-stage);
+  --color-nfc-night: var(--rs-nfc-night);
+  --color-nfc-panel: var(--rs-nfc-panel);
+  --color-nfc-deep: var(--rs-nfc-deep);
+
   /* Superficies propias */
   --color-surface: var(--rs-surface);
   --color-surface-raised: var(--rs-surface-raised);
@@ -112,6 +136,8 @@
   --font-heading: var(--font-space-grotesk), var(--font-geist-sans), ui-sans-serif, sans-serif;
   --font-display: var(--font-heading);
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  /* Solo para el contenido de las invitaciones dentro de los celulares de muestra. */
+  --font-serif: var(--font-fraunces), Georgia, serif;
 
   /* Radios */
   --radius-sm: calc(var(--radius) * 0.6);
@@ -144,6 +170,13 @@
     15% { opacity: 1; }
     85% { opacity: 1; }
     92%, 100% { transform: translateY(var(--scan-distance, 20rem)); opacity: 0; }
+  }
+
+  --animate-float-phone: float-phone 7s ease-in-out infinite;
+
+  @keyframes float-phone {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 -8px; }
   }
 
   @keyframes float-slow {
@@ -189,6 +222,29 @@
 }
 
 @layer utilities {
+  /* Cuadrícula muy tenue de las bandas de productos digitales (líneas cada 56px). */
+  .bg-grid-night {
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  .bg-grid-nfc {
+    background-image:
+      linear-gradient(to right, rgb(125 211 252 / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(125 211 252 / 0.05) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  /* Las animaciones decorativas se apagan con prefers-reduced-motion. */
+  @media (prefers-reduced-motion: reduce) {
+    .motion-safe-only {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+
   /* Texto con gradiente de marca (navy → azul → índigo). */
   .text-gradient-brand {
     background-image: linear-gradient(110deg, var(--rs-navy) 20%, var(--rs-royal) 60%, var(--rs-indigo) 100%);

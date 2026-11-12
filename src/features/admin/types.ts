@@ -1,3 +1,4 @@
+import type { NfcAudience, NfcColors, NfcInclude, TemplateColors, TemplateField } from "@/types/digital";
 /** Contratos de la API administrativa. Los importes son centavos calculados por el backend. */
 import type { PackageCategory } from "@/types/catalog";
 import type { QuoteCalculation, QuoteSelection, QuoteStatus } from "@/types/quote";
@@ -281,30 +282,103 @@ export interface AdminLead {
   createdAt: string;
 }
 
+/** Vista previa del link de la demo, como la guarda el panel. */
+export interface AdminLinkPreview {
+  title: string | null;
+  description: string | null;
+  domain: string | null;
+  path: string;
+  imagePath: string | null;
+  faviconPath: string | null;
+  siteName: string | null;
+  imageSource: "og" | "upload" | null;
+  fetchedAt: string | null;
+  error: string | null;
+}
+
+export type ProductStatus = "draft" | "published";
+
 export interface AdminDigitalTemplate {
   id: string;
   slug: string;
-  kind: "digital_gift" | "nfc_card";
   name: string;
   description: string | null;
-  occasion: string;
   demoUrl: string;
-  domain: string;
+  occasions: string[];
+  fields: TemplateField[];
   priceCents: number | null;
-  customizableFields: string[];
-  imagePath: string | null;
+  colors: TemplateColors;
   featured: boolean;
-  status: "active" | "inactive";
+  status: ProductStatus;
   sortOrder: number;
-  preview: {
-    title: string | null;
-    description: string | null;
-    siteName: string | null;
-    imageSource: "og" | "upload" | null;
-    fetchedAt: string | null;
-    error: string | null;
-  };
+  preview: AdminLinkPreview;
   updatedAt: string;
+}
+
+export interface ProductPage<T> extends Paged<T> {
+  counts: { all: number; published: number; draft: number };
+}
+
+export interface AdminOccasion {
+  id: string;
+  slug: string;
+  label: string;
+  sortOrder: number;
+}
+
+export interface AdminNfcDesign {
+  id: string;
+  slug: string;
+  name: string;
+  demoUrl: string;
+  colors: NfcColors;
+  frontImagePath: string | null;
+  backImagePath: string | null;
+  status: ProductStatus;
+  sortOrder: number;
+  preview: AdminLinkPreview;
+  updatedAt: string;
+}
+
+/** Resultado de POST /admin/link-preview (imagen e ícono como data: URL; no se guarda nada). */
+export interface LinkPreviewResult {
+  title: string | null;
+  description: string | null;
+  siteName: string | null;
+  domain: string;
+  image: string | null;
+  favicon: string | null;
+  fetchedAt: string;
+}
+
+export type FulfillmentStatus = "new" | "in_progress" | "delivered";
+
+export interface AdminDigitalOrder {
+  id: string;
+  reference: string;
+  createdAt: string;
+  leadStatus: LeadStatus;
+  contact: { name: string; email: string; phone: string | null };
+  message: string;
+  order: {
+    kind: "digital_gift" | "nfc_card";
+    slug: string;
+    name: string;
+    demoUrl: string | null;
+    quantity: number;
+    unitPriceCents: number | null;
+    fields: { key: string | null; label: string; value: string }[];
+    photos: { fileId: string; contentType: string; size: number; path: string }[];
+    audience: NfcAudience | null;
+    includes: NfcInclude[];
+    fulfillment: FulfillmentStatus;
+    deliveredUrl: string | null;
+    deliveredAt: string | null;
+  };
+}
+
+export interface DigitalOrdersPage extends Paged<AdminDigitalOrder> {
+  counts: Record<FulfillmentStatus, number>;
 }
 
 export interface BusinessSettings {

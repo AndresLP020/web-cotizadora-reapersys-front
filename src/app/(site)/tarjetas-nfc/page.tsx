@@ -1,49 +1,49 @@
-import { CreditCard, Smartphone, UserRound } from "lucide-react";
 import type { Metadata } from "next";
-import { Section, SectionHeading } from "@/components/layout/section";
-import { StepsGrid } from "@/features/digital/steps-grid";
-import { TemplateGallery } from "@/features/digital/template-gallery";
-import { CtaBanner } from "@/features/marketing/cta-banner";
-import { PageHero } from "@/features/marketing/page-hero";
+import { Suspense } from "react";
+import { NfcConfigurator } from "@/features/digital/nfc-configurator";
+import { NfcFaq, NfcHero, NfcIncluded } from "@/features/digital/nfc-page-sections";
+import { getNfcDesigns, getNfcPricing } from "@/services/digital";
+import { getPublicSettings } from "@/services/public-settings";
 
 export const metadata: Metadata = {
   title: "Tarjetas NFC de presentación",
-  description: "Tarjetas NFC de presentación para tu empresa, negocio o marca personal, con su página de contacto personalizada. Elige el diseño y pide las que necesites.",
+  description:
+    "Tarjeta física con chip NFC y una página de contacto con tu diseño. Quien la recibe acerca su celular y guarda tus datos al instante, sin app.",
   alternates: { canonical: "/tarjetas-nfc" },
+  openGraph: { title: "Tarjetas NFC de presentación | ReaperSys", url: "/tarjetas-nfc" },
 };
-
-const included = [
-  { icon: CreditCard, title: "Tarjeta NFC", description: "La tarjeta física de presentación, lista para entregar a tus clientes y contactos." },
-  { icon: UserRound, title: "Página de contacto personalizada", description: "Una página con los datos de contacto de tu empresa, negocio o persona, con el diseño que elijas." },
-  { icon: Smartphone, title: "Se comparte al acercarla", description: "Quien la recibe acerca su celular a la tarjeta y se abre tu página de contacto." },
-];
 
 export default function NfcCardsPage() {
   return (
     <>
-      <PageHero
-        eyebrow="Tarjetas NFC"
-        title="Tu presentación, a un toque del celular"
-        description="Tarjetas NFC para tu empresa, negocio o marca personal, con una página de contacto hecha a tu medida."
-        image="/images/backgrounds/services-desk.webp"
-      />
-      <Section tone="tint" className="pt-14 sm:pt-20" aria-labelledby="included-title">
-        <SectionHeading id="included-title" eyebrow="Qué incluye" title="La tarjeta y su página de contacto" />
-        <div className="mt-10">
-          <StepsGrid items={included} numbered={false} />
-        </div>
-      </Section>
-      <Section tone="tint-alt" aria-labelledby="catalog-title">
-        <SectionHeading
-          id="catalog-title"
-          title="Diseños de página de contacto"
-          description="Abre la demo de cada diseño. Al pedir, indicas cuántas tarjetas necesitas y los datos que llevará tu página."
-        />
-        <div className="mt-10">
-          <TemplateGallery kind="nfc_card" />
-        </div>
-      </Section>
-      <CtaBanner title="¿Necesitas tarjetas para todo tu equipo?" description="Escríbenos y armamos un pedido con la página de cada integrante." />
+      <NfcHero />
+      <NfcIncluded />
+      <Suspense fallback={<ConfiguratorSkeleton />}>
+        <Configurator />
+      </Suspense>
+      <NfcFaq />
     </>
+  );
+}
+
+async function Configurator() {
+  const [designs, pricing, settings] = await Promise.all([getNfcDesigns(), getNfcPricing(), getPublicSettings()]);
+  return (
+    <NfcConfigurator
+      designs={designs.status === "ok" ? designs.data : []}
+      tiers={pricing.status === "ok" ? pricing.data : []}
+      privacyNoticeAvailable={settings.privacyNotice.published}
+    />
+  );
+}
+
+function ConfiguratorSkeleton() {
+  return (
+    <section className="bg-paper py-20 sm:py-24" aria-busy="true" aria-label="Cargando el configurador">
+      <div className="mx-auto grid w-full max-w-[1240px] gap-6 px-4 sm:px-6 lg:grid-cols-[1.2fr_1fr]">
+        <div className="h-[520px] animate-pulse rounded-[28px] bg-nfc-panel" />
+        <div className="h-[520px] animate-pulse rounded-[28px] bg-white" />
+      </div>
+    </section>
   );
 }

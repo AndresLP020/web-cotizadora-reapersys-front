@@ -65,6 +65,33 @@
   --rs-shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 8px 24px -12px rgb(15 23 42 / 0.12);
   --rs-shadow-elevated: 0 2px 4px rgb(15 23 42 / 0.04), 0 24px 48px -20px rgb(11 31 68 / 0.28);
 
+  /*
+   * Productos digitales (detalles y tarjetas NFC): bandas nocturnas con un acento propio por línea.
+   * Rosa = detalles digitales; cian = tarjetas NFC. Todos los pares texto/fondo cumplen AA (4.5:1).
+   */
+  --rs-night: #070b17;
+  --rs-night-text: #f5f7fb;
+  --rs-night-muted: #a9b1c6;
+  --rs-paper: #eef1f6;
+  --rs-paper-line: #dde2ec;
+  --rs-deep: #0a0f1e;
+  --rs-deep-muted: #4a5368;
+  --rs-new: #e8c77e;
+  --rs-phone: #05060b;
+  --rs-chat: #0b3b2e;
+  --rs-gift: #f4a6b8;
+  --rs-on-gift: #2a0b16;
+  --rs-gift-stage: #1a1120;
+  --rs-gift-night: #0e0a14;
+  --rs-gift-form: #17111f;
+  --rs-gift-deep: #b23a5a;
+  --rs-nfc: #7dd3fc;
+  --rs-on-nfc: #06212f;
+  --rs-nfc-stage: #0b1a2a;
+  --rs-nfc-night: #071320;
+  --rs-nfc-panel: #0b1626;
+  --rs-nfc-deep: #0369a1;
+
   --rs-radius-sm: 0.5rem;
   --rs-radius-md: 0.875rem;
   --rs-radius-lg: 1.25rem;
