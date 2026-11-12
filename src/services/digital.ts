@@ -1,4 +1,4 @@
-import { publicEnv } from "@/lib/env";
+import { browserApiUrl, publicEnv } from "@/lib/env";
 import type { DigitalKind, PublicDigitalTemplate } from "@/types/digital";
 
 const apiBase = process.env.API_INTERNAL_URL || publicEnv.NEXT_PUBLIC_API_URL;
@@ -23,5 +23,5 @@ export async function getDigitalTemplates(kind: DigitalKind): Promise<DigitalCat
 
 /** URL absoluta de la imagen de vista previa (la sirve la API). */
 export function templateImageUrl(imagePath: string | null): string | null {
-  return imagePath ? `${publicEnv.NEXT_PUBLIC_API_URL}${imagePath}` : null;
+  return imagePath ? `${browserApiUrl}${imagePath}` : null;
 }

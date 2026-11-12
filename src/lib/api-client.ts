@@ -1,4 +1,4 @@
-import { publicEnv } from "./env";
+import { browserApiUrl, publicEnv } from "./env";
 
 /** Formato de error uniforme que devuelve el backend (AllExceptionsFilter). */
 export interface ApiErrorBody {
@@ -30,7 +30,7 @@ type ApiRequestInit = Omit<RequestInit, "body"> & { json?: unknown; form?: FormD
  */
 export async function apiFetch<T>(path: string, init: ApiRequestInit = {}): Promise<T> {
   const { json, form, headers, ...rest } = init;
-  const response = await fetch(`${publicEnv.NEXT_PUBLIC_API_URL}${path}`, {
+  const response = await fetch(`${typeof window === "undefined" ? publicEnv.NEXT_PUBLIC_API_URL : browserApiUrl}${path}`, {
     credentials: "include",
     ...rest,
     headers: {

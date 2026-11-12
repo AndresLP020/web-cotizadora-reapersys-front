@@ -15,3 +15,14 @@ export const publicEnv = publicEnvSchema.parse({
   NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || undefined,
   NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || undefined,
 });
+
+/**
+ * Base de la API para el navegador (fetch, enlaces e imágenes).
+ * Si la API se sirve a través del propio sitio (reenvío de Vercel), se usa la ruta relativa: así
+ * cualquier dominio del despliegue (producción, alias `-git-main-…`, previews) llama a su mismo origen
+ * y no a otro dominio, lo que evitaría CORS y la cookie de sesión del panel.
+ */
+export const browserApiUrl =
+  new URL(publicEnv.NEXT_PUBLIC_API_URL).origin === new URL(publicEnv.NEXT_PUBLIC_SITE_URL).origin
+    ? new URL(publicEnv.NEXT_PUBLIC_API_URL).pathname.replace(/\/+$/, "")
+    : publicEnv.NEXT_PUBLIC_API_URL;
