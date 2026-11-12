@@ -1,4 +1,4 @@
-import { ArrowRight, CalendarClock, Check, Clock } from "lucide-react";
+import { ArrowRight, CalendarClock, Check, ChevronDown, Clock, Gift } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -88,7 +88,21 @@ export function subscriptionSummary(offer: PublicSubscriptionOffer): string {
   return `${parts.join(" · ")}.`;
 }
 
+/** Características visibles antes de «+N más». */
+const VISIBLE_FEATURES = 8;
+
+function FeatureItem({ feature }: { feature: string }) {
+  return (
+    <li className="flex gap-2.5">
+      <Check className="mt-0.5 size-4 shrink-0 text-electric" aria-hidden />
+      <span className="text-foreground-secondary">{feature}</span>
+    </li>
+  );
+}
+
 export function PackageCard({ pkg, plans }: { pkg: PublicPackage; plans: PlanSettings }) {
+  const visible = pkg.features.slice(0, VISIBLE_FEATURES);
+  const more = pkg.features.slice(VISIBLE_FEATURES);
   return (
     <article
       className={cn(
@@ -134,14 +148,37 @@ export function PackageCard({ pkg, plans }: { pkg: PublicPackage; plans: PlanSet
         </p>
       )}
 
-      <ul className="mb-6 space-y-2.5 text-sm">
-        {pkg.features.map((feature) => (
-          <li key={feature} className="flex gap-2.5">
-            <Check className="mt-0.5 size-4 shrink-0 text-electric" aria-hidden />
-            <span className="text-foreground-secondary">{feature}</span>
-          </li>
+      <ul className="space-y-2.5 text-sm">
+        {visible.map((feature) => (
+          <FeatureItem key={feature} feature={feature} />
         ))}
       </ul>
+      {more.length > 0 && (
+        <details className="group/more mt-2.5 text-sm">
+          <summary className="inline-flex cursor-pointer list-none items-center gap-1 font-medium text-electric [&::-webkit-details-marker]:hidden">
+            <span className="group-open/more:hidden">+{more.length} más</span>
+            <span className="hidden group-open/more:inline">Ver menos</span>
+            <ChevronDown className="size-4 transition-transform group-open/more:rotate-180" aria-hidden />
+          </summary>
+          <ul className="mt-2.5 space-y-2.5">
+            {more.map((feature) => (
+              <FeatureItem key={feature} feature={feature} />
+            ))}
+          </ul>
+        </details>
+      )}
+
+      {pkg.includedValueCents > 0 && (
+        <p className="mt-4 flex items-start gap-2 rounded-xl bg-royal/10 px-3 py-2 text-xs text-foreground-secondary">
+          <Gift className="mt-0.5 size-4 shrink-0 text-electric" aria-hidden />
+          <span>
+            Incluye <strong className="font-semibold text-foreground">{formatMoney(pkg.includedValueCents)}</strong> en complementos (lo que
+            costarían por separado).
+          </span>
+        </p>
+      )}
+
+      <div className="mb-6" />
 
       {pkg.variants.length > 0 && (
         <div className="mb-6 space-y-2 rounded-xl border border-border bg-mist p-4">

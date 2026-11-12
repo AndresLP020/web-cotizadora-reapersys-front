@@ -265,10 +265,46 @@ export interface AdminLead {
   industry?: string;
   interest?: string;
   message: string;
-  source: "contact_form" | "quote_builder";
+  source: "contact_form" | "quote_builder" | "digital_order";
   status: LeadStatus;
   quoteId: string | null;
+  /** Pedido de un detalle digital o de tarjetas NFC. */
+  digitalOrder: {
+    kind: "digital_gift" | "nfc_card";
+    templateSlug: string;
+    templateName: string;
+    demoUrl: string;
+    quantity: number;
+    unitPriceCents: number | null;
+    fields: { label: string; value: string }[];
+  } | null;
   createdAt: string;
+}
+
+export interface AdminDigitalTemplate {
+  id: string;
+  slug: string;
+  kind: "digital_gift" | "nfc_card";
+  name: string;
+  description: string | null;
+  occasion: string;
+  demoUrl: string;
+  domain: string;
+  priceCents: number | null;
+  customizableFields: string[];
+  imagePath: string | null;
+  featured: boolean;
+  status: "active" | "inactive";
+  sortOrder: number;
+  preview: {
+    title: string | null;
+    description: string | null;
+    siteName: string | null;
+    imageSource: "og" | "upload" | null;
+    fetchedAt: string | null;
+    error: string | null;
+  };
+  updatedAt: string;
 }
 
 export interface BusinessSettings {

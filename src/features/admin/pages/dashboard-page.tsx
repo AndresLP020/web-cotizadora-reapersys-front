@@ -121,7 +121,7 @@ export function DashboardPage() {
                       <span className="min-w-0">
                         <span className="block truncate">{l.name}{l.company ? ` · ${l.company}` : ""}</span>
                         <span className="block text-xs text-muted-foreground">
-                          {l.source === "quote_builder" ? "Cotizador" : "Formulario de contacto"} · {formatDateTime(l.createdAt)}
+                          {l.source === "quote_builder" ? "Cotizador" : l.source === "digital_order" ? "Pedido digital" : "Formulario de contacto"} · {formatDateTime(l.createdAt)}
                         </span>
                       </span>
                       <StatusPill status={l.status} label={leadStatusLabels[l.status]} />

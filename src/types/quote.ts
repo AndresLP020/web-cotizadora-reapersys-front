@@ -32,7 +32,16 @@ export interface PublicComponent {
 }
 
 export interface PublicPackageItem {
-  component: { slug: string; name: string; unit: string };
+  component: {
+    slug: string;
+    name: string;
+    unit: string;
+    /** Nombre cuando viene incluido («Secciones de la página»). */
+    includedLabel?: string;
+    /** Lo que contiene sin ser un componente propio («Productos ilimitados»). */
+    highlights: string[];
+    maxQuantity: number;
+  };
   quantity: number;
   removable: boolean;
 }
@@ -55,10 +64,15 @@ export interface PublicPackageDetail {
   pricingType: "fixed" | "calculated" | "evaluation";
   items: PublicPackageItem[];
   variantGroups: PublicVariantGroup[];
-  includedPackages: { slug: string; name: string; variants: Record<string, string> }[];
+  /** Paquetes contenidos (combos), con sus items. */
+  includedPackages: { slug: string; name: string; variants: Record<string, string>; items: PublicPackageItem[] }[];
   recommendedRecurring: PublicComponent[];
-  /** Complementos compatibles con el paquete. Vacío = el paquete no los restringe. */
+  /** Lo que se puede agregar: el backend ya quitó lo incluido y lo equivalente (salvo unidades extra). Vacío = sin adicionales. */
   addOns: PublicComponent[];
+  /** Lo que el paquete ya cubre aunque no esté en items: nunca se ofrece. */
+  equivalents: string[];
+  /** Informativo: lo que costarían por separado los complementos incluidos. */
+  includedValueCents: number;
   subscription: PublicSubscriptionOffer | null;
   /** Servicios que la mensualidad ya cubre: en suscripción no se contratan aparte. */
   subscriptionIncludedServices: string[];

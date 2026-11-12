@@ -10,6 +10,8 @@ const publicRoutes: { path: string; priority: number }[] = [
   { path: "/desarrollo-web", priority: 0.8 },
   { path: "/ecommerce", priority: 0.8 },
   { path: "/punto-de-venta", priority: 0.8 },
+  { path: "/detalles-digitales", priority: 0.8 },
+  { path: "/tarjetas-nfc", priority: 0.8 },
   { path: "/industrias", priority: 0.7 },
   { path: "/nosotros", priority: 0.6 },
   { path: "/contacto", priority: 0.7 },

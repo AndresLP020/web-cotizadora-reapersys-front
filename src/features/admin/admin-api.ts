@@ -21,4 +21,6 @@ export const adminApi = {
   },
   send: <T>(method: Method, path: string, json?: unknown) =>
     apiFetch<T>(path, { method, json, headers: csrfToken ? { "X-CSRF-Token": csrfToken } : undefined }),
+  /** Envío de archivos (multipart/form-data). */
+  upload: <T>(path: string, form: FormData) => apiFetch<T>(path, { method: "POST", form, headers: csrfToken ? { "X-CSRF-Token": csrfToken } : undefined }),
 };

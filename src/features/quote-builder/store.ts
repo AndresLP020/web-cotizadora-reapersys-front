@@ -42,6 +42,8 @@ interface QuoteBuilderState {
   /** Cantidad TOTAL deseada por componente de pago único. */
   quantities: Record<string, number>;
   recurring: string[];
+  /** «paquete:modalidad» cuyo mantenimiento recomendado ya se preseleccionó (no se vuelve a marcar si el cliente lo quita). */
+  recurringPreselectedFor: string | null;
   /** Dominio u hosting con los que el cliente ya cuenta (se descuentan). */
   clientProvided: string[];
   /** Resultado de la solicitud (no se persiste: contiene el token de acceso). */
@@ -57,6 +59,8 @@ interface QuoteBuilderState {
   toggleRemoved: (slug: string) => void;
   setQuantity: (slug: string, quantity: number) => void;
   toggleRecurring: (slug: string, exclusiveWith?: string[]) => void;
+  setRecurring: (slugs: string[]) => void;
+  preselectRecurring: (key: string, slugs: string[]) => void;
   toggleClientProvided: (slug: string) => void;
   setResult: (result: CreateQuoteResult) => void;
   reset: () => void;
@@ -74,6 +78,7 @@ const initial = {
   removed: [],
   quantities: {},
   recurring: [],
+  recurringPreselectedFor: null,
   clientProvided: [],
   result: null,
 };
@@ -96,9 +101,11 @@ export const useQuoteStore = create<QuoteBuilderState>()(
           removed: [],
           quantities: {},
           recurring: [],
+          recurringPreselectedFor: null,
         })),
       // Los servicios incluidos cambian con la modalidad: se reinicia la elección de recurrentes.
-      setPaymentMode: (paymentMode) => set((s) => (s.paymentMode === paymentMode ? {} : { paymentMode, recurring: [] })),
+      setPaymentMode: (paymentMode) =>
+        set((s) => (s.paymentMode === paymentMode ? {} : { paymentMode, recurring: [], recurringPreselectedFor: null })),
       setSubscriptionPlan: (subscriptionPlan) => set({ subscriptionPlan }),
       setVariant: (groupKey, optionKey) => set((s) => ({ variants: { ...s.variants, [groupKey]: optionKey } })),
       toggleRemoved: (slug) =>
@@ -116,6 +123,9 @@ export const useQuoteStore = create<QuoteBuilderState>()(
             ? { recurring: s.recurring.filter((r) => r !== slug) }
             : { recurring: [...s.recurring.filter((r) => !exclusiveWith.includes(r)), slug] },
         ),
+      setRecurring: (recurring) => set({ recurring }),
+      preselectRecurring: (key, slugs) =>
+        set((s) => (s.recurringPreselectedFor === key ? {} : { recurringPreselectedFor: key, recurring: slugs })),
       // No depende del paquete: si el cliente ya tiene dominio u hosting, sigue igual al cambiar de paquete.
       toggleClientProvided: (slug) =>
         set((s) => ({
@@ -142,6 +152,7 @@ export const useQuoteStore = create<QuoteBuilderState>()(
         removed: s.removed,
         quantities: s.quantities,
         recurring: s.recurring,
+        recurringPreselectedFor: s.recurringPreselectedFor,
         clientProvided: s.clientProvided,
       }),
     },

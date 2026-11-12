@@ -37,6 +37,8 @@ export interface PublicPackage {
   sortOrder: number;
   /** Renta mensual; null si el paquete no se ofrece en suscripción. */
   subscription: PublicSubscriptionOffer | null;
+  /** Informativo: lo que costarían por separado los complementos incluidos. No altera el total; 0 = no se muestra. */
+  includedValueCents: number;
 }
 
 export interface PublicSubscriptionOffer {

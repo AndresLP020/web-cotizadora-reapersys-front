@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { benefits, faqs, intro } from "@/content/home";
 import { industries } from "@/content/industries";
 import { coreServiceLines } from "@/content/services";
+import { DigitalHomeSection } from "@/features/digital/digital-home-section";
 import { BuilderTeaser } from "@/features/marketing/builder-teaser";
 import { CtaBanner } from "@/features/marketing/cta-banner";
 import { FaqJsonLd, FaqList } from "@/features/marketing/faq-section";
@@ -87,8 +88,21 @@ export default function HomePage() {
         />
       </Section>
 
+      {/* 2b. Productos digitales: detalles personalizables y tarjetas NFC */}
+      <Section aria-labelledby="digital-title" tone="tint">
+        <div className="mb-12 grid gap-6 lg:grid-cols-[1.2fr_1fr] lg:items-end">
+          <SectionHeading id="digital-title" eyebrow="Nuevo" title="Detalles digitales y tarjetas NFC" />
+          <Reveal delay={0.1}>
+            <p className="text-lg leading-relaxed text-pretty text-foreground-secondary lg:border-l lg:border-gold/50 lg:pl-6">
+              Sorprende a quien quieres con un detalle personalizado o lleva tu contacto a un toque del celular.
+            </p>
+          </Reveal>
+        </div>
+        <DigitalHomeSection />
+      </Section>
+
       {/* 3. Soluciones por industria: primera tarjeta destacada a dos columnas */}
-      <Section aria-labelledby="industries-title" tone="tint">
+      <Section aria-labelledby="industries-title" tone="tint-alt">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <SectionHeading
             id="industries-title"

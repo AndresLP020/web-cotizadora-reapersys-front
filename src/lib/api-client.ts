@@ -21,7 +21,7 @@ export class ApiError extends Error {
   }
 }
 
-type ApiRequestInit = Omit<RequestInit, "body"> & { json?: unknown };
+type ApiRequestInit = Omit<RequestInit, "body"> & { json?: unknown; form?: FormData };
 
 /**
  * Cliente HTTP hacia la API de ReaperSys.
@@ -29,7 +29,7 @@ type ApiRequestInit = Omit<RequestInit, "body"> & { json?: unknown };
  * - El navegador nunca se conecta a MongoDB: todo pasa por la API.
  */
 export async function apiFetch<T>(path: string, init: ApiRequestInit = {}): Promise<T> {
-  const { json, headers, ...rest } = init;
+  const { json, form, headers, ...rest } = init;
   const response = await fetch(`${publicEnv.NEXT_PUBLIC_API_URL}${path}`, {
     credentials: "include",
     ...rest,
@@ -38,7 +38,8 @@ export async function apiFetch<T>(path: string, init: ApiRequestInit = {}): Prom
       ...(json !== undefined ? { "Content-Type": "application/json" } : {}),
       ...headers,
     },
-    body: json !== undefined ? JSON.stringify(json) : undefined,
+    // Con FormData el navegador pone el Content-Type (multipart con su boundary).
+    body: json !== undefined ? JSON.stringify(json) : form,
   });
 
   if (!response.ok) {

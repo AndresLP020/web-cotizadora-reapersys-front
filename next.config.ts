@@ -33,7 +33,8 @@ const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' blob: data:",
+  // Las imágenes de vista previa de las plantillas las sirve la API.
+  `img-src 'self' blob: data: ${apiOrigin}`,
   "font-src 'self'",
   `connect-src 'self' ${apiOrigin}${isDev ? " ws: wss:" : ""}`,
   "worker-src 'self'",
@@ -59,6 +60,8 @@ const nextConfig: NextConfig = {
   partialPrefetching: true,
   poweredByHeader: false,
   reactStrictMode: true,
+  // Calidades usadas por <Image quality={...}> en el sitio (Next 16 rechaza las no listadas).
+  images: { qualities: [60, 70, 72, 75] },
   // Servidor autocontenido para la imagen de Docker; Vercel usa su propio empaquetado.
   ...(process.env.VERCEL ? {} : { output: "standalone" as const }),
   ...(workspaceRoot ? { outputFileTracingRoot: workspaceRoot } : {}),

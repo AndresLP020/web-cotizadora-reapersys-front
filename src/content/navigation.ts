@@ -18,6 +18,8 @@ export const serviceNav: NavItem[] = [
   { label: "Desarrollo web", href: "/desarrollo-web", description: "Landing pages y sitios corporativos." },
   { label: "E-commerce", href: "/ecommerce", description: "Tiendas virtuales listas para vender." },
   { label: "Punto de venta", href: "/punto-de-venta", description: "Equipos y software POS." },
+  { label: "Detalles digitales", href: "/detalles-digitales", description: "Invitaciones y sorpresas personalizadas." },
+  { label: "Tarjetas NFC", href: "/tarjetas-nfc", description: "Tarjeta de presentación con página de contacto." },
   { label: "Todos los servicios", href: "/servicios", description: "Software, integraciones y soporte." },
 ];
 
@@ -28,6 +30,8 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
       { label: "Desarrollo web", href: "/desarrollo-web" },
       { label: "E-commerce", href: "/ecommerce" },
       { label: "Punto de venta", href: "/punto-de-venta" },
+      { label: "Detalles digitales", href: "/detalles-digitales" },
+      { label: "Tarjetas NFC", href: "/tarjetas-nfc" },
       { label: "Paquetes", href: "/paquetes" },
     ],
   },

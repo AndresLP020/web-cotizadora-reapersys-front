@@ -8,9 +8,10 @@ import { useCan } from "@/features/admin/session";
 import type { AdminLead, LeadStatus, Paged } from "@/features/admin/types";
 import { EmptyState, ErrorState, formatDateTime, leadStatusLabels, PageHeader, Pagination, Panel, StatusPill, TableSkeleton, useAdminMutation } from "@/features/admin/ui";
 import { useListParams } from "@/features/admin/use-list-params";
+import { formatMoney } from "@/lib/format";
 
 const ALL = "all";
-const sourceLabels = { contact_form: "Formulario de contacto", quote_builder: "Cotizador" } as const;
+const sourceLabels = { contact_form: "Formulario de contacto", quote_builder: "Cotizador", digital_order: "Pedido digital" } as const;
 
 export function LeadsPage() {
   const { values, page, update } = useListParams(["status", "source"] as const);
@@ -78,7 +79,34 @@ export function LeadsPage() {
                       <a href={`mailto:${lead.email}`} className="break-all text-electric hover:underline">{lead.email}</a>
                       {lead.phone && <span className="text-muted-foreground"> · {lead.phone}</span>}
                     </p>
-                    <p className="line-clamp-2 text-sm text-foreground-secondary">{lead.message}</p>
+                    {lead.digitalOrder ? (
+                      <div className="mt-1 rounded-lg border border-border bg-mist px-3 py-2 text-sm">
+                        <p className="font-medium">
+                          {lead.digitalOrder.kind === "nfc_card" ? `Tarjetas NFC × ${lead.digitalOrder.quantity}` : "Detalle digital"} ·{" "}
+                          <a href={lead.digitalOrder.demoUrl} target="_blank" rel="noopener noreferrer" className="text-electric hover:underline">
+                            {lead.digitalOrder.templateName}
+                          </a>
+                          <span className="font-normal text-muted-foreground">
+                            {" · "}
+                            {lead.digitalOrder.unitPriceCents === null
+                              ? "Por cotizar"
+                              : `${formatMoney(lead.digitalOrder.unitPriceCents * lead.digitalOrder.quantity)} MXN`}
+                          </span>
+                        </p>
+                        {lead.digitalOrder.fields.length > 0 && (
+                          <dl className="mt-1 grid gap-x-3 gap-y-0.5 text-foreground-secondary sm:grid-cols-[auto_1fr]">
+                            {lead.digitalOrder.fields.map((f) => (
+                              <div key={f.label} className="contents">
+                                <dt className="text-muted-foreground">{f.label}</dt>
+                                <dd className="whitespace-pre-line">{f.value}</dd>
+                              </div>
+                            ))}
+                          </dl>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="line-clamp-2 text-sm text-foreground-secondary">{lead.message}</p>
+                    )}
                     <p className="text-xs text-muted-foreground">
                       {sourceLabels[lead.source]} · <span className="font-mono">{lead.reference}</span> · {formatDateTime(lead.createdAt)}
                       {lead.quoteId && (
